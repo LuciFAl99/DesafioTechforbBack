@@ -18,7 +18,6 @@ public class Loan {
     private String name;
     private double maxAmount;
     private double interest;
-    private LocalDateTime date;
     @ElementCollection
     private List<Integer> payments;
     @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
@@ -27,12 +26,11 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(String name, double maxAmount, double interest, List<Integer> payments, LocalDateTime date) {
+    public Loan(String name, double maxAmount, double interest, List<Integer> payments) {
         this.name = name;
         this.maxAmount = maxAmount;
         this.interest = interest;
         this.payments = payments;
-        this.date = date;
     }
 
     public long getId() {
@@ -73,14 +71,6 @@ public class Loan {
 
     public void setPayments(List<Integer> payments) {
         this.payments = payments;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     public Set<ClientLoan> getClientLoans() {

@@ -1,35 +1,27 @@
-package com.Techforb.DesafioTecnico.Models;
+package com.Techforb.DesafioTecnico.DTOs;
 
-import org.hibernate.annotations.GenericGenerator;
+import com.Techforb.DesafioTecnico.Models.ClientLoan;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-public class ClientLoan {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+public class ClientLoanDTO {
     private long id;
+    private long loanId;
+    private String name;
     private double amount;
     private double finalAmount;
     private int payments;
     private int originalPayments;
     private LocalDateTime date;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Client client;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Loan loan;
-
-    public ClientLoan() {
-    }
-
-    public ClientLoan(double amount, double finalAmount, int payments, int originalPayments, LocalDateTime date) {
-        this.amount = amount;
-        this.finalAmount = finalAmount;
-        this.payments = payments;
-        this.originalPayments = originalPayments;
-        this.date = date;
+    public ClientLoanDTO (ClientLoan clientLoan){
+        this.id = clientLoan.getId();
+        this.loanId = clientLoan.getLoan().getId();
+        this.name = clientLoan.getLoan().getName();
+        this.amount = clientLoan.getAmount();
+        this.finalAmount = clientLoan.getFinalAmount();
+        this.payments = clientLoan.getPayments();
+        this.originalPayments = clientLoan.getOriginalPayments();
+        this.date = clientLoan.getDate();
     }
 
     public long getId() {
@@ -38,6 +30,22 @@ public class ClientLoan {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getLoanId() {
+        return loanId;
+    }
+
+    public void setLoanId(long loanId) {
+        this.loanId = loanId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getAmount() {
@@ -78,21 +86,5 @@ public class ClientLoan {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public Loan getLoan() {
-        return loan;
-    }
-
-    public void setLoan(Loan loan) {
-        this.loan = loan;
     }
 }
