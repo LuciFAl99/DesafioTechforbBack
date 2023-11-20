@@ -24,12 +24,11 @@ public class ClientLoan {
     public ClientLoan() {
     }
 
-    public ClientLoan(double amount, double finalAmount, int payments, int originalPayments, LocalDateTime date) {
+    public ClientLoan(double amount, double finalAmount, int payments, int originalPayments) {
         this.amount = amount;
         this.finalAmount = finalAmount;
         this.payments = payments;
         this.originalPayments = originalPayments;
-        this.date = date;
     }
 
     public long getId() {

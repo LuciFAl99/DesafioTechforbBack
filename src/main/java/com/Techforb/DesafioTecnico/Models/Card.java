@@ -96,4 +96,8 @@ public class Card {
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
     }
+    public void addTransaction(Transaction transaction){
+        transaction.setCard(this);
+        transactions.add(transaction);
+    }
 }
