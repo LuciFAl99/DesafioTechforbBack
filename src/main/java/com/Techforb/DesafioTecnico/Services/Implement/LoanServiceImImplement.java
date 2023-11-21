@@ -40,10 +40,8 @@ public class LoanServiceImImplement implements LoanService {
     public ResponseEntity<Object> loans(Authentication authentication, LoanApplicationDTO loanApplicationDto) {
         Loan loan = this.loanRepository.findById(loanApplicationDto.getLoanId());
         Card card = this.cardRepository.findByNumber(loanApplicationDto.getDestinationCardNumber());
-        Client client = this.clientRepository.findByEmail(authentication.getName());
+        Client client = this.clientRepository.findByDni(authentication.getName());
 
-
-        //Verificar que los campos no esten vacíos o no sean inválidos
         StringBuilder errorMessage = new StringBuilder();
         if (loanApplicationDto.getDestinationCardNumber().isBlank()) {
             errorMessage.append("El número de cuenta destino es requerido\n");
@@ -58,46 +56,36 @@ public class LoanServiceImImplement implements LoanService {
             errorMessage.append("El tipo de préstamo es requerido\n");
         }
 
-
         if (errorMessage.length() > 0) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorMessage.toString());
         }
 
-        //Verificar que el préstamo exista
         if (loan == null) {
             return new ResponseEntity<>("No existe el Préstamo", HttpStatus.FORBIDDEN);
         }
 
-        //Verificar que la cuenta exista
         if (card == null) {
             return new ResponseEntity<>("La cuenta destino no existe", HttpStatus.FORBIDDEN);
         }
 
-        //Verificar que el cliente exista
         if (client == null) {
             return new ResponseEntity<>("El cliente autenticado no existe", HttpStatus.FORBIDDEN);
         }
-        //Verificar que el monto solicitado no exceda el monto máximo del préstamo
         if(loanApplicationDto.getAmount() > loan.getMaxAmount()){
             return new ResponseEntity<>("El monto solicitado supera el permitido", HttpStatus.FORBIDDEN);
         }
 
-        //Verificar que la cantidad de cuotas se encuentre entre las disponibles del préstamo
         if (!loan.getPayments().contains(loanApplicationDto.getPayments())){
             return new ResponseEntity<>("Cantidad de cuotas incorrectas", HttpStatus.FORBIDDEN);
         }
-        //Verificar que la cuenta de destino exista
         if(loanApplicationDto.getDestinationCardNumber() == null){
             return new ResponseEntity<>("La cuenta destino no existe", HttpStatus.FORBIDDEN);
         }
-        // Verificar que el cliente no tenga ya un préstamo del mismo tipo
         ClientLoan existingLoan = this.clientLoanRepository.findByLoanAndClient(loan, client);
         if (existingLoan != null) {
             return new ResponseEntity<>("El cliente ya tiene un préstamo del mismo tipo", HttpStatus.FORBIDDEN);
         }
 
-
-        //Verificar que la cuenta de destino pertenezca al cliente autenticado
         if(!card.getClient().equals(client)){
             return new ResponseEntity<>("La cuenta destino no pertenece al cliente autenticado", HttpStatus.FORBIDDEN);
         }
@@ -108,12 +96,10 @@ public class LoanServiceImImplement implements LoanService {
         clientLoan.setDate(LocalDateTime.now());
         clientLoanRepository.save(clientLoan);
 
-        //Creo la transaccion y la guardo
         Double initialBalanceclientAcc = card.getBalance() + loanApplicationDto.getAmount();
         Transaction creditTransaction = new Transaction(TransactionType.CREDITO, TransactionState.CONFIRMED, loanApplicationDto.getAmount(),loanApplicationDto.getLoanId()+"crédito aprobado", LocalDateTime.now(),initialBalanceclientAcc);
         transactionRepository.save(creditTransaction);
 
-        //Le asigno la transaccion a la cuenta de destino, le agrego el balance y la guardo
         card.addTransaction(creditTransaction);
         card.setBalance(card.getBalance()+creditTransaction.getAmount());
         cardRepository.save(card);
@@ -123,7 +109,7 @@ public class LoanServiceImImplement implements LoanService {
 
     @Override
     public ResponseEntity<Object> payLoan(Authentication authentication, long idLoan, String card, double amount) {
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientRepository.findByDni(authentication.getName());
         Optional<ClientLoan> clientLoan = clientLoanRepository.findById(idLoan);
         Card cardAuthenticated = cardRepository.findByNumber(card);
         String description = "Pago de préstamo " + clientLoan.get().getLoan().getName();
@@ -175,6 +161,13 @@ public class LoanServiceImImplement implements LoanService {
             clientLoan.get().setPayments(0);
         }
         return new ResponseEntity<>("Pago efectuado correctamente", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> newLoanAdmin(Loan loan) {
+        Loan newLoan = new Loan(loan.getName(), loan.getMaxAmount() , loan.getInterest(), loan.getPayments());
+        loanRepository.save(newLoan);
+        return new ResponseEntity<>("Préstamo creado con éxito", HttpStatus.CREATED);
     }
 
 

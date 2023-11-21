@@ -2,6 +2,7 @@ package com.Techforb.DesafioTecnico.Controllers;
 
 import com.Techforb.DesafioTecnico.DTOs.LoanApplicationDTO;
 import com.Techforb.DesafioTecnico.DTOs.LoanDTO;
+import com.Techforb.DesafioTecnico.Models.Loan;
 import com.Techforb.DesafioTecnico.Services.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +29,9 @@ public class LoanController {
     public ResponseEntity<Object> payLoan(Authentication authentication , @RequestParam long idLoan , @RequestParam String card, @RequestParam double amount) {
         return loanService.payLoan(authentication, idLoan, card, amount);
     }
+    @PostMapping("/api/admin/loan")
+    public ResponseEntity<Object> newLoanAdmin(@RequestBody Loan loan) {
+        return loanService.newLoanAdmin(loan);
+    }
+
 }

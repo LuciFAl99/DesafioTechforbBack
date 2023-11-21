@@ -1,5 +1,6 @@
 package com.Techforb.DesafioTecnico.DTOs;
 
+import com.Techforb.DesafioTecnico.Enums.DniType;
 import com.Techforb.DesafioTecnico.Models.Client;
 
 import java.util.List;
@@ -9,14 +10,16 @@ public class ClientDTO {
     private long id;
     private String firstName;
     private String lastName;
-    private String email;
+    private DniType dniType;
+    private String dni;
     private List<ClientLoanDTO> loans;
     private List<CardDTO> cards;
     public ClientDTO(Client client){
         this.id = client.getId();
         this.firstName = client.getName();
         this.lastName = client.getLastname();
-        this.email = client.getEmail();
+        this.dniType = client.getDniType();
+        this.dni = client.getDni();
         this.loans = client.getClientLoans().stream().map(loan -> new ClientLoanDTO(loan)).collect(Collectors.toList());
         this.cards = client.getCards().stream().map(card -> new CardDTO(card)).collect(Collectors.toList());
     }
@@ -45,12 +48,20 @@ public class ClientDTO {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
+    public DniType getDniType() {
+        return dniType;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDniType(DniType dniType) {
+        this.dniType = dniType;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public List<ClientLoanDTO> getLoans() {

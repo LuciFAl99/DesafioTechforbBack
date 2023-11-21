@@ -8,26 +8,39 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
+@CrossOrigin(origins = "http://localhost:4200")
 public class WebAuthorization {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
+                .antMatchers("/home").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.POST, "/api/loans", "/api/current/loans").hasAuthority("CLIENT")
                 .antMatchers("/api/loans").hasAnyAuthority("CLIENT", "ADMIN")
-                .antMatchers("/api/clients").hasAuthority("ADMIN");
+                .antMatchers(HttpMethod.POST, "/api/admin/loan").hasAuthority("ADMIN")
+                .antMatchers("/api/clients").hasAuthority("ADMIN")
+                .antMatchers("api/clients/current").hasAuthority("CLIENT")
+                .and().csrf().disable()
+                .cors().and().sessionManagement().enableSessionUrlRewriting(false).and().sessionManagement().maximumSessions(1).and().and()
+                .headers().frameOptions().disable()
+                .and().httpBasic().and().formLogin().disable();
 
         http.formLogin()
 
-                .usernameParameter("email")
+                .usernameParameter("dni")
 
                 .passwordParameter("password")
 
@@ -36,25 +49,32 @@ public class WebAuthorization {
 
         http.logout().logoutUrl("/api/logout").deleteCookies("JSESSIONID");
 
-        // turn off checking for CSRF tokens
         http.csrf().disable();
 
-        //disabling frameOptions so h2-console can be accessed
         http.headers().frameOptions().disable();
 
-        // if user is not authenticated, just send an authentication failure response
         http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_EXPECTATION_FAILED));
 
-        // if login is successful, just clear the flags asking for authentication
         http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
 
-        // if login fails, just send an authentication failure response
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
-        // if logout is successful, just send a success response
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 
         return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowCredentials(true); // Permitir credenciales (cookies)
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {

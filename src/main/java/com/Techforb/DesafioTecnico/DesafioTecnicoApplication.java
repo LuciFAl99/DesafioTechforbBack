@@ -1,5 +1,6 @@
 package com.Techforb.DesafioTecnico;
 
+import com.Techforb.DesafioTecnico.Enums.DniType;
 import com.Techforb.DesafioTecnico.Models.Card;
 import com.Techforb.DesafioTecnico.Models.Client;
 import com.Techforb.DesafioTecnico.Repositories.CardRepository;

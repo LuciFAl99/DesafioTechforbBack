@@ -1,5 +1,6 @@
 package com.Techforb.DesafioTecnico.Models;
 
+import com.Techforb.DesafioTecnico.Enums.DniType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,7 +15,9 @@ public class Client {
     private long id;
     private String name;
     private String lastname;
-    private String email;
+    private DniType dniType;
+    @Column(unique = true)
+    private String dni;
     private String password;
     @OneToMany(mappedBy="client", fetch=FetchType.EAGER)
     private Set<Card> cards = new HashSet<>();
@@ -24,14 +27,15 @@ public class Client {
     public Client() {
     }
 
-    public Client(String name, String lastname, String email, String password) {
+    public Client(String name, String lastname, DniType dniType, String dni, String password) {
         this.name = name;
         this.lastname = lastname;
-        this.email = email;
+        this.dniType = dniType;
+        this.dni = dni;
         this.password = password;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -55,12 +59,20 @@ public class Client {
         this.lastname = lastname;
     }
 
-    public String getEmail() {
-        return email;
+    public DniType getDniType() {
+        return dniType;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDniType(DniType dniType) {
+        this.dniType = dniType;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getPassword() {
