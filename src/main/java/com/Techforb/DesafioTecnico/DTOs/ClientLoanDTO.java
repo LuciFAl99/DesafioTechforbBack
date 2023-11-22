@@ -11,6 +11,8 @@ public class ClientLoanDTO {
     private double amount;
     private double finalAmount;
     private int payments;
+    private double monthly;
+    private double interest;
     private int originalPayments;
     private LocalDateTime date;
     public ClientLoanDTO (ClientLoan clientLoan){
@@ -20,6 +22,8 @@ public class ClientLoanDTO {
         this.amount = clientLoan.getAmount();
         this.finalAmount = clientLoan.getFinalAmount();
         this.payments = clientLoan.getPayments();
+        this.monthly = (clientLoan.getFinalAmount() / clientLoan.getOriginalPayments());
+        this.interest = clientLoan.getLoan().getInterest();
         this.originalPayments = clientLoan.getOriginalPayments();
         this.date = clientLoan.getDate();
     }
@@ -70,6 +74,22 @@ public class ClientLoanDTO {
 
     public void setPayments(int payments) {
         this.payments = payments;
+    }
+
+    public double getMonthly() {
+        return monthly;
+    }
+
+    public void setMonthly(double monthly) {
+        this.monthly = monthly;
+    }
+
+    public double getInterest() {
+        return interest;
+    }
+
+    public void setInterest(double interest) {
+        this.interest = interest;
     }
 
     public int getOriginalPayments() {

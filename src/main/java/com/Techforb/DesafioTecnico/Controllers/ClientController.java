@@ -19,7 +19,7 @@ public class ClientController {
     public List<ClientDTO> getClients(){
         return clientService.getClients();
     }
-    @GetMapping("api/clients/current")
+    @GetMapping("/api/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication) {
         return clientService.getCurrentClient(authentication);
     }

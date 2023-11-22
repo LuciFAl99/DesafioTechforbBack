@@ -83,7 +83,16 @@ public class LoanServiceImImplement implements LoanService {
         }
         ClientLoan existingLoan = this.clientLoanRepository.findByLoanAndClient(loan, client);
         if (existingLoan != null) {
-            return new ResponseEntity<>("El cliente ya tiene un préstamo del mismo tipo", HttpStatus.FORBIDDEN);
+            if (existingLoan.getPayments() == 0) {
+                ClientLoan newLoan = new ClientLoan(loanApplicationDto.getAmount(), loanApplicationDto.getAmount() * loan.getInterest(), loanApplicationDto.getPayments(), loanApplicationDto.getPayments());
+                newLoan.setClient(client);
+                newLoan.setLoan(loan);
+                newLoan.setDate(LocalDateTime.now());
+                clientLoanRepository.save(newLoan);
+                return new ResponseEntity<>("Nuevo préstamo del mismo tipo solicitado", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("El cliente ya tiene un préstamo del mismo tipo y no ha completado los pagos", HttpStatus.FORBIDDEN);
+            }
         }
 
         if(!card.getClient().equals(client)){
