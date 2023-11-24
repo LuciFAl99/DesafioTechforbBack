@@ -1,6 +1,6 @@
 package com.Techforb.DesafioTecnico.DTOs;
 
-import com.Techforb.DesafioTecnico.Models.ClientLoan;
+import com.Techforb.DesafioTecnico.models.ClientLoan;
 
 import java.time.LocalDateTime;
 

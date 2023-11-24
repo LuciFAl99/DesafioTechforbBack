@@ -1,12 +1,17 @@
-package com.Techforb.DesafioTecnico.DTOs;
+package com.Techforb.DesafioTecnico.models;
 
 import com.Techforb.DesafioTecnico.enums.TransactionState;
 import com.Techforb.DesafioTecnico.enums.TransactionType;
-import com.Techforb.DesafioTecnico.models.Transaction;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-public class TransactionDTO {
+@Entity
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private TransactionType transactionType;
     private TransactionState transactionState;
@@ -14,14 +19,19 @@ public class TransactionDTO {
     private String description;
     private LocalDateTime date;
     private double balanceTransaction;
-    public TransactionDTO(Transaction transaction){
-        this.id = transaction.getId();
-        this.transactionType = transaction.getTransactionType();
-        this.transactionState = transaction.getTransactionState();
-        this.amount = transaction.getAmount();
-        this.description = transaction.getDescription();
-        this.date = transaction.getDate();
-        this.balanceTransaction = transaction.getBalanceTransaction();
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Card card;
+
+    public Transaction() {
+    }
+
+    public Transaction(TransactionType transactionType, TransactionState transactionState, double amount, String description, LocalDateTime date, double balanceTransaction) {
+        this.transactionType = transactionType;
+        this.transactionState = transactionState;
+        this.amount = amount;
+        this.description = description;
+        this.date = date;
+        this.balanceTransaction = balanceTransaction;
     }
 
     public long getId() {
@@ -79,5 +89,12 @@ public class TransactionDTO {
     public void setBalanceTransaction(double balanceTransaction) {
         this.balanceTransaction = balanceTransaction;
     }
-}
 
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+}

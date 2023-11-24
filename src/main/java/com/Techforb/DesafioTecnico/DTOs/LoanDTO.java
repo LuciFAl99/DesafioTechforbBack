@@ -1,9 +1,7 @@
 package com.Techforb.DesafioTecnico.DTOs;
 
-import com.Techforb.DesafioTecnico.Models.Loan;
+import com.Techforb.DesafioTecnico.models.Loan;
 
-import javax.persistence.ElementCollection;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class LoanDTO {

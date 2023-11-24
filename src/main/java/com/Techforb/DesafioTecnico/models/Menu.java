@@ -1,8 +1,18 @@
-package com.Techforb.DesafioTecnico.DTOs;
+package com.Techforb.DesafioTecnico.models;
 
-import com.Techforb.DesafioTecnico.models.Menu;
+import org.hibernate.annotations.GenericGenerator;
 
-public class MenuDTO {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Menu {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private long id;
     private String menu;
     private String cards;
     private String loans;
@@ -12,16 +22,28 @@ public class MenuDTO {
     private String points;
     private String help;
     private String logout;
-    public MenuDTO(Menu menu){
-        this.menu = menu.getMenu();
-        this.cards = menu.getCards();
-        this.loans = menu.getLoans();
-        this.operations = menu.getOperations();
-        this.offers = menu.getOffers();
-        this.insurance = menu.getInsurance();
-        this.points = menu.getPoints();
-        this.help = menu.getHelp();
-        this.logout = menu.getLogout();
+
+    public Menu() {
+    }
+
+    public Menu(String menu, String cards, String loans, String operations, String offers, String insurance, String points, String help, String logout) {
+        this.menu = menu;
+        this.cards = cards;
+        this.loans = loans;
+        this.operations = operations;
+        this.offers = offers;
+        this.insurance = insurance;
+        this.points = points;
+        this.help = help;
+        this.logout = logout;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getMenu() {

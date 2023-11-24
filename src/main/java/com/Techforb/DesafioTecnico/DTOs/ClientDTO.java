@@ -1,7 +1,7 @@
 package com.Techforb.DesafioTecnico.DTOs;
 
-import com.Techforb.DesafioTecnico.Enums.DniType;
-import com.Techforb.DesafioTecnico.Models.Client;
+import com.Techforb.DesafioTecnico.enums.DniType;
+import com.Techforb.DesafioTecnico.models.Client;
 
 import java.util.List;
 import java.util.stream.Collectors;

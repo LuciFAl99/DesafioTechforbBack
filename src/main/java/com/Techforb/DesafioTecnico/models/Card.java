@@ -1,12 +1,16 @@
-package com.Techforb.DesafioTecnico.DTOs;
+package com.Techforb.DesafioTecnico.models;
 
-import com.Techforb.DesafioTecnico.models.Card;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class CardDTO {
+import java.util.HashSet;
+import java.util.Set;
+@Entity
+public class Card {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private String number;
     private double balance;
@@ -14,16 +18,21 @@ public class CardDTO {
     private double expenditures;
     private LocalDateTime creationDate;
     private LocalDateTime thruDate;
-    private List<TransactionDTO> transactions;
-    public CardDTO(Card card){
-        this.id = card.getId();
-        this.number = card.getNumber();
-        this.balance = card.getBalance();
-        this.revenues = card.getRevenues();
-        this.expenditures = card.getExpenditures();
-        this.creationDate = card.getCreationDate();
-        this.thruDate = card.getThruDate();
-        this.transactions = card.getTransactions().stream().map(transaction -> new TransactionDTO(transaction)).collect(Collectors.toList());
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Client client;
+    @OneToMany(mappedBy="card", fetch=FetchType.EAGER)
+    private Set<Transaction> transactions = new HashSet<>();
+
+    public Card() {
+    }
+
+    public Card(String number,double balance, double revenues, double expenditures, LocalDateTime creationDate, LocalDateTime thruDate) {
+        this.number = number;
+        this.balance = balance;
+        this.revenues = revenues;
+        this.expenditures = expenditures;
+        this.creationDate = creationDate;
+        this.thruDate = thruDate;
     }
 
     public long getId() {
@@ -74,10 +83,6 @@ public class CardDTO {
         this.creationDate = creationDate;
     }
 
-    public List<TransactionDTO> getTransactions() {
-        return transactions;
-    }
-
     public LocalDateTime getThruDate() {
         return thruDate;
     }
@@ -86,7 +91,23 @@ public class CardDTO {
         this.thruDate = thruDate;
     }
 
-    public void setTransactions(List<TransactionDTO> transactions) {
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
+    }
+    public void addTransaction(Transaction transaction){
+        transaction.setCard(this);
+        transactions.add(transaction);
     }
 }

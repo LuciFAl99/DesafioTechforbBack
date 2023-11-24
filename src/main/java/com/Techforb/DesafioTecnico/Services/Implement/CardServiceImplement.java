@@ -1,8 +1,8 @@
-package com.Techforb.DesafioTecnico.Services.Implement;
+package com.Techforb.DesafioTecnico.services.implement;
 
-import com.Techforb.DesafioTecnico.Models.Card;
-import com.Techforb.DesafioTecnico.Repositories.CardRepository;
-import com.Techforb.DesafioTecnico.Services.CardService;
+import com.Techforb.DesafioTecnico.models.Card;
+import com.Techforb.DesafioTecnico.repositories.CardRepository;
+import com.Techforb.DesafioTecnico.services.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
