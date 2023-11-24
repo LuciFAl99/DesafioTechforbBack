@@ -8,6 +8,7 @@ import com.Techforb.DesafioTecnico.Repositories.CardRepository;
 import com.Techforb.DesafioTecnico.Repositories.ClientRepository;
 import com.Techforb.DesafioTecnico.Services.ClientService;
 import com.Techforb.DesafioTecnico.Utils.CardUtils;
+import com.Techforb.DesafioTecnico.Utils.ClientUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,7 @@ public class ClientServiceImplement implements ClientService {
         if (dni == null || dni.isBlank()) {
             errors.append("Número de DNI es requerido\n");
         } else {
-            if (!esNumero(dni) || Long.parseLong(dni) <= 1000000) {
+            if (!ClientUtils.esNumero(dni) || Long.parseLong(dni) <= 1000000) {
                 errors.append("El número de DNI debe ser un número válido y mayor a 1,000,000\n");
             }
         }
@@ -94,16 +95,5 @@ public class ClientServiceImplement implements ClientService {
         newClient.addCard(newCard);
         cardRepository.save(newCard);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-    private boolean esNumero(String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-        for (char c : str.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
