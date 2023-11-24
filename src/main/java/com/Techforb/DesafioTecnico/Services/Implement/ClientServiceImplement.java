@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,12 @@ public class ClientServiceImplement implements ClientService {
     CardRepository cardRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Override
+    public Client findByName(String name) {
+        return clientRepository.findByName(name);
+    }
+
 
     @Override
     public List<ClientDTO> getClients() {
@@ -78,9 +85,11 @@ public class ClientServiceImplement implements ClientService {
 
         }
 
+        LocalDateTime fromDate = LocalDateTime.now();
+        LocalDateTime thruDate = fromDate.plusYears(5);
         String cardNumber = CardUtils.getCardNumber();
         Client newClient = new Client(firstName, lastName, dniType, dni, passwordEncoder.encode(password));
-        Card newCard = new Card(cardNumber, 0, 0, 0, LocalDateTime.now());
+        Card newCard = new Card(cardNumber, 0, 0, 0, fromDate, thruDate);
         clientRepository.save(newClient);
         newClient.addCard(newCard);
         cardRepository.save(newCard);

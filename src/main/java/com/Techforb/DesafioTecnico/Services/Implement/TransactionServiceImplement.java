@@ -3,9 +3,11 @@ package com.Techforb.DesafioTecnico.Services.Implement;
 import com.Techforb.DesafioTecnico.Enums.TransactionState;
 import com.Techforb.DesafioTecnico.Enums.TransactionType;
 import com.Techforb.DesafioTecnico.Models.Card;
+import com.Techforb.DesafioTecnico.Models.Client;
 import com.Techforb.DesafioTecnico.Models.Transaction;
 import com.Techforb.DesafioTecnico.Repositories.TransactionRepository;
 import com.Techforb.DesafioTecnico.Services.CardService;
+import com.Techforb.DesafioTecnico.Services.ClientService;
 import com.Techforb.DesafioTecnico.Services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ import java.time.LocalDateTime;
 public class TransactionServiceImplement implements TransactionService {
     @Autowired
     CardService cardService;
+    @Autowired
+    ClientService clientService;
     @Autowired
     TransactionRepository transactionRepository;
     @Override
@@ -66,12 +70,16 @@ public class TransactionServiceImplement implements TransactionService {
         if (originCard.getBalance() < amount) {
             return new ResponseEntity<>("No posees fondos suficientes para realizar esta transacción", HttpStatus.FORBIDDEN);
         }
+        Client originCardOwner = originCard.getClient();
+        String originCardOwnerName = originCardOwner != null ? originCardOwner.getName() + " " + originCardOwner.getLastname() : "Propietario no encontrado";
+        Client destinationCardOwner = destinationCard.getClient();
+        String destinationCardOwnerName = destinationCardOwner != null ? destinationCardOwner.getName() + " " + destinationCardOwner.getLastname() : "Propietario no encontrado";
 
 
         Double initialOriginBalanceAccount = originCard.getBalance() - amount;
-        Transaction debitTransaction = new Transaction(TransactionType.DEBITO, TransactionState.CONFIRMED, -amount, destinationCardNumber + " " + description, LocalDateTime.now(), initialOriginBalanceAccount);
+        Transaction debitTransaction = new Transaction(TransactionType.DEBITO, TransactionState.CONFIRMED, amount, destinationCardOwnerName, LocalDateTime.now(), initialOriginBalanceAccount);
         Double initialDestinBalanceAccount = destinationCard.getBalance() + amount;
-        Transaction creditTransaction = new Transaction(TransactionType.CREDITO, TransactionState.CONFIRMED, amount, originCardNumber + " " + description, LocalDateTime.now(), initialDestinBalanceAccount);
+        Transaction creditTransaction = new Transaction(TransactionType.CREDITO, TransactionState.CONFIRMED, amount, originCardOwnerName, LocalDateTime.now(), initialDestinBalanceAccount);
 
         originCard.addTransaction(debitTransaction);
         destinationCard.addTransaction(creditTransaction);
@@ -81,6 +89,22 @@ public class TransactionServiceImplement implements TransactionService {
 
         originCard.setBalance(originCard.getBalance() - amount);
         destinationCard.setBalance(destinationCard.getBalance() + amount);
+
+        if (debitTransaction.getTransactionType() == TransactionType.DEBITO) {
+            originCard.setExpenditures(originCard.getExpenditures() + amount);
+        } else if (creditTransaction.getTransactionType() == TransactionType.CREDITO) {
+            originCard.setRevenues(originCard.getRevenues() + amount);
+        }
+
+        if (creditTransaction.getTransactionType() == TransactionType.CREDITO) {
+            destinationCard.setRevenues(destinationCard.getRevenues() + amount);
+        } else if (debitTransaction.getTransactionType() == TransactionType.DEBITO) {
+            destinationCard.setExpenditures(destinationCard.getExpenditures() + amount);
+        }
+
+        cardService.saveCard(originCard);
+        cardService.saveCard(destinationCard);
+
 
         cardService.saveCard(originCard);
         cardService.saveCard(destinationCard);

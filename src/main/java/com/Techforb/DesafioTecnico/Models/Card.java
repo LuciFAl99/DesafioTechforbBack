@@ -17,6 +17,7 @@ public class Card {
     private double revenues;
     private double expenditures;
     private LocalDateTime creationDate;
+    private LocalDateTime thruDate;
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
     @OneToMany(mappedBy="card", fetch=FetchType.EAGER)
@@ -25,12 +26,13 @@ public class Card {
     public Card() {
     }
 
-    public Card(String number,double balance, double revenues, double expenditures, LocalDateTime creationDate) {
+    public Card(String number,double balance, double revenues, double expenditures, LocalDateTime creationDate, LocalDateTime thruDate) {
         this.number = number;
         this.balance = balance;
         this.revenues = revenues;
         this.expenditures = expenditures;
         this.creationDate = creationDate;
+        this.thruDate = thruDate;
     }
 
     public long getId() {
@@ -79,6 +81,14 @@ public class Card {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getThruDate() {
+        return thruDate;
+    }
+
+    public void setThruDate(LocalDateTime thruDate) {
+        this.thruDate = thruDate;
     }
 
     public Client getClient() {

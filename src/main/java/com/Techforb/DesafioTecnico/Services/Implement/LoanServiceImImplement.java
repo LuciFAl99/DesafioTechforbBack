@@ -106,8 +106,13 @@ public class LoanServiceImImplement implements LoanService {
         clientLoanRepository.save(clientLoan);
 
         Double initialBalanceclientAcc = card.getBalance() + loanApplicationDto.getAmount();
-        Transaction creditTransaction = new Transaction(TransactionType.CREDITO, TransactionState.CONFIRMED, loanApplicationDto.getAmount(),loanApplicationDto.getLoanId()+"crédito aprobado", LocalDateTime.now(),initialBalanceclientAcc);
+        Transaction creditTransaction = new Transaction(TransactionType.CREDITO, TransactionState.CONFIRMED, loanApplicationDto.getAmount(),"Crédito aprobado", LocalDateTime.now(),initialBalanceclientAcc);
         transactionRepository.save(creditTransaction);
+
+
+        if (creditTransaction.getTransactionType() == TransactionType.CREDITO) {
+            card.setRevenues(card.getRevenues() + loanApplicationDto.getAmount());
+        }
 
         card.addTransaction(creditTransaction);
         card.setBalance(card.getBalance()+creditTransaction.getAmount());
@@ -162,10 +167,14 @@ public class LoanServiceImImplement implements LoanService {
         transactionRepository.save(debitLoan);
         cardAuthenticated.addTransaction(debitLoan);
 
+        if (debitLoan.getTransactionType() == TransactionType.DEBITO) {
+            cardAuthenticated.setExpenditures(cardAuthenticated.getExpenditures() + amount);
+        }
+
         cardRepository.save(cardAuthenticated);
 
         if ( amount < clientLoan.get().getFinalAmount()){
-            clientLoan.get().setPayments(clientLoan.get().getPayments() - 1 ); //para actualizar la cantidad de cuotas
+            clientLoan.get().setPayments(clientLoan.get().getPayments() - 1 );
         } else {
             clientLoan.get().setPayments(0);
         }

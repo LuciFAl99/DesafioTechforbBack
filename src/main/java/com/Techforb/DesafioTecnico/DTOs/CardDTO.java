@@ -2,6 +2,7 @@ package com.Techforb.DesafioTecnico.DTOs;
 
 import com.Techforb.DesafioTecnico.Models.Card;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ public class CardDTO {
     private double revenues;
     private double expenditures;
     private LocalDateTime creationDate;
+    private LocalDateTime thruDate;
     private List<TransactionDTO> transactions;
     public CardDTO(Card card){
         this.id = card.getId();
@@ -21,6 +23,7 @@ public class CardDTO {
         this.revenues = card.getRevenues();
         this.expenditures = card.getExpenditures();
         this.creationDate = card.getCreationDate();
+        this.thruDate = card.getThruDate();
         this.transactions = card.getTransactions().stream().map(transaction -> new TransactionDTO(transaction)).collect(Collectors.toList());
     }
 
@@ -74,6 +77,14 @@ public class CardDTO {
 
     public List<TransactionDTO> getTransactions() {
         return transactions;
+    }
+
+    public LocalDateTime getThruDate() {
+        return thruDate;
+    }
+
+    public void setThruDate(LocalDateTime thruDate) {
+        this.thruDate = thruDate;
     }
 
     public void setTransactions(List<TransactionDTO> transactions) {

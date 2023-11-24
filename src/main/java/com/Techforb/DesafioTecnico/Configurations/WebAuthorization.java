@@ -27,7 +27,7 @@ public class WebAuthorization {
         http.cors().and().authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
-                .antMatchers("/api/clients/current").hasAuthority("CLIENT")
+                .antMatchers("/api/clients/current", "/api/menu").hasAuthority("CLIENT")
                 .antMatchers("/home").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.POST, "/api/loans", "/api/current/loans", "/api/clients/current/transactions").hasAuthority("CLIENT")
                 .antMatchers("/api/loans").hasAnyAuthority("CLIENT", "ADMIN")

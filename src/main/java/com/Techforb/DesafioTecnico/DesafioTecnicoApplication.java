@@ -1,14 +1,8 @@
 package com.Techforb.DesafioTecnico;
 
 import com.Techforb.DesafioTecnico.Enums.DniType;
-import com.Techforb.DesafioTecnico.Models.Card;
-import com.Techforb.DesafioTecnico.Models.Client;
-import com.Techforb.DesafioTecnico.Models.ClientLoan;
-import com.Techforb.DesafioTecnico.Models.Loan;
-import com.Techforb.DesafioTecnico.Repositories.CardRepository;
-import com.Techforb.DesafioTecnico.Repositories.ClientLoanRepository;
-import com.Techforb.DesafioTecnico.Repositories.ClientRepository;
-import com.Techforb.DesafioTecnico.Repositories.LoanRepository;
+import com.Techforb.DesafioTecnico.Models.*;
+import com.Techforb.DesafioTecnico.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +23,7 @@ public class DesafioTecnicoApplication {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Bean
-    public CommandLineRunner initData(ClientLoanRepository clientLoanRepository, LoanRepository loanRepository, ClientRepository clientRepository) {
+    public CommandLineRunner initData() {
         return (args) -> {
 
         };
